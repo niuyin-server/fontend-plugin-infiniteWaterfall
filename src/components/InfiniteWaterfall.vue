@@ -1,9 +1,10 @@
 <template>
-  <div class="container mx-auto px-4">
+  <div class="p-4">
     <div
         class="grid gap-4"
         :style="{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }"
     >
+      <!--     foreach items-->
       <div
           v-for="item in items"
           :key="item.id"
@@ -19,15 +20,15 @@
       </div>
     </div>
     <div ref="loadingRef" class="flex justify-center items-center py-4">
-      <Loader2 v-if="loading" class="animate-spin" />
+      <Loader2 v-if="loading" class="animate-spin"/>
       <p v-if="!hasMore" class="text-gray-500">没有更多内容了</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import { Loader2 } from 'lucide-vue-next'
+import {ref, onMounted, onUnmounted, watch, nextTick} from 'vue'
+import {Loader2} from 'lucide-vue-next'
 
 const props = defineProps({
   fetchItems: {
