@@ -16,8 +16,9 @@
           <img
               :src="item.coverImage"
               :alt="item.videoTitle"
-              class="w-full h-auto rounded-t-lg shadow-md"
-              :style="{ height: `${height}px` }"
+              class="w-full h-full rounded-t-lg "
+              :style="{ height: `${height}px`}"
+              style="object-fit: cover"
           />
         </div>
         <!-- 标题区域 -->
@@ -25,7 +26,7 @@
           <div class="text-base text-clamp-2 font-semibold">{{ item.videoTitle }}</div>
           <div class="flex justify-start mt-1">
             <img :src="item.userAvatar" :alt="item.userNickName" class="shadow-md size-8 rounded-full"/>
-            <span class="text-xs flex ml-2" style="align-items: center">{{ item.userNickName }}</span>
+            <span class="text-xs flex ml-2" style="align-items: center;">{{ item.userNickName }}</span>
           </div>
         </div>
       </div>
