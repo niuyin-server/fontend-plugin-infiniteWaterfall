@@ -1,21 +1,13 @@
 <template>
   <div class="min-h-screen min-w-full bg-gray-100 ">
     <!--    <h1 class="text-3xl font-bold text-center mb-8">瀑布流演示</h1>-->
-    <InfiniteWaterfall :fetchItems="fetchItems" :columnCount="5"/>
+    <InfiniteWaterfall :columnCount="5"/>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import InfiniteWaterfall from '../components/InfiniteWaterfall.vue'
-import axios from "axios";
+import InfiniteWaterfall from '@/components/InfiniteWaterfall.vue'
 
-const fetchItems = async (page) => {
-  // 模拟 API 调用
-  await axios.get('/mock/recommend/video/feed').then(res => {
-    return res.data.data
-  })
-}
 </script>
 
 <style scoped>

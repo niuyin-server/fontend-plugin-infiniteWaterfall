@@ -4,19 +4,30 @@
         class="grid gap-4"
         :style="{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }"
     >
-      <!--     foreach items-->
+      <!-- foreach items-->
       <div
           v-for="item in items"
           :key="item.videoId"
-          class="break-inside-avoid shadow-md hover:shadow-lg transition ease-in-out duration-300 rounded-lg"
+          class="flex flex-col break-inside-avoid shadow-md hover:shadow-lg transition ease-in-out duration-300 rounded-lg"
+
       >
-        <img
-            :src="item.coverImage"
-            :alt="item.videoTitle"
-            class="w-full h-auto rounded-lg shadow-md"
-            :style="{ height: `${height}px` }"
-        />
-        <h3 class="mt-2 text-lg font-semibold">{{ item.videoTitle }}</h3>
+        <!-- 封面区域 -->
+        <div class="w-full h-auto" :style="{ height: `${height}px` }">
+          <img
+              :src="item.coverImage"
+              :alt="item.videoTitle"
+              class="w-full h-auto rounded-t-lg shadow-md"
+              :style="{ height: `${height}px` }"
+          />
+        </div>
+        <!-- 标题区域 -->
+        <div class="h-auto p-3 flex flex-col justify-between grow">
+          <div class="text-base text-clamp-2 font-semibold">{{ item.videoTitle }}</div>
+          <div class="flex justify-start mt-1">
+            <img :src="item.userAvatar" :alt="item.userNickName" class="shadow-md size-8 rounded-full"/>
+            <span class="text-xs flex ml-2" style="align-items: center">{{ item.userNickName }}</span>
+          </div>
+        </div>
       </div>
     </div>
     <div ref="loadingRef" class="flex justify-center items-center py-4">
@@ -29,13 +40,9 @@
 <script setup>
 import {ref, onMounted, onUnmounted, watch, nextTick} from 'vue'
 import {Loader2} from 'lucide-vue-next'
-import axios from "axios";
+import {recommendVideoFeed} from "@/api/recommend.js";
 
 const props = defineProps({
-  fetchItems: {
-    type: Function,
-    required: true
-  },
   columnCount: {
     type: Number,
     default: 5
@@ -50,17 +57,13 @@ const observerRef = ref(null)
 const loadingRef = ref(null)
 const height = ref(window.innerWidth * 9 / 16 / props.columnCount)
 
-const fetchVideos = async () => {
-  const res = await axios.get('/mock/recommend/video/feed')
-  return res.data.data
-}
-
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return
   console.log('Loading more items...') // 调试信息
   loading.value = true
   try {
-    const newItems = await fetchVideos(page.value)
+    const res = await recommendVideoFeed(page.value)
+    const newItems = res.data.data
     console.log('New items:', newItems) // 调试信息
     if (newItems.length === 0) {
       hasMore.value = false
