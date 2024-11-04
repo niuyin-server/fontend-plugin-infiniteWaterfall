@@ -7,16 +7,16 @@
       <!--     foreach items-->
       <div
           v-for="item in items"
-          :key="item.id"
-          class="break-inside-avoid mb-4"
+          :key="item.videoId"
+          class="break-inside-avoid shadow-md hover:shadow-lg transition ease-in-out duration-300 rounded-lg"
       >
         <img
-            :src="item.image"
-            :alt="item.title"
+            :src="item.coverImage"
+            :alt="item.videoTitle"
             class="w-full h-auto rounded-lg shadow-md"
-            :style="{ height: `${item.height}px` }"
+            :style="{ height: `${height}px` }"
         />
-        <h3 class="mt-2 text-lg font-semibold">{{ item.title }}</h3>
+        <h3 class="mt-2 text-lg font-semibold">{{ item.videoTitle }}</h3>
       </div>
     </div>
     <div ref="loadingRef" class="flex justify-center items-center py-4">
@@ -29,6 +29,7 @@
 <script setup>
 import {ref, onMounted, onUnmounted, watch, nextTick} from 'vue'
 import {Loader2} from 'lucide-vue-next'
+import axios from "axios";
 
 const props = defineProps({
   fetchItems: {
@@ -37,7 +38,7 @@ const props = defineProps({
   },
   columnCount: {
     type: Number,
-    default: 3
+    default: 5
   }
 })
 
@@ -47,13 +48,20 @@ const loading = ref(false)
 const hasMore = ref(true)
 const observerRef = ref(null)
 const loadingRef = ref(null)
+const height = ref(window.innerWidth * 9 / 16 / props.columnCount)
+
+const fetchVideos = async () => {
+  const res = await axios.get('/mock/recommend/video/feed')
+  return res.data.data
+}
 
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return
   console.log('Loading more items...') // 调试信息
   loading.value = true
   try {
-    const newItems = await props.fetchItems(page.value)
+    const newItems = await fetchVideos(page.value)
+    console.log('New items:', newItems) // 调试信息
     if (newItems.length === 0) {
       hasMore.value = false
     } else {
@@ -81,6 +89,7 @@ const observeIntersection = (entries) => {
 }
 
 onMounted(() => {
+  // height.value = Math.floor(window.innerWidth * 9 / 16 / props.columnCount)
   observerRef.value = new IntersectionObserver(observeIntersection, {threshold: 0.1}) // 调整阈值
   if (loadingRef.value) {
     observerRef.value.observe(loadingRef.value)
