@@ -12,14 +12,24 @@
 
       >
         <!-- 封面区域 -->
-        <div class="w-full h-auto" :style="{ height: `${height}px` }">
+        <div class="w-full h-auto relative" :style="{ height: `${height}px` }">
           <img
               :src="item.coverImage"
               :alt="item.videoTitle"
-              class="w-full h-full rounded-t-lg "
-              :style="{ height: `${height}px`}"
-              style="object-fit: cover"
+              class="w-full h-full rounded-t-lg absolute top-0 left-0"
+              :style="{ height: `${height}px`, objectFit: 'cover' }"
+              @mouseover="showVideo(item)"
+              @mouseout="hideVideo(item)"
           />
+          <video
+              :src="item.videoUrl"
+              class="w-full h-full rounded-t-lg absolute top-0 left-0"
+              :style="{ height: `${height}px`, display: item.showVideo ? 'block' : 'none', objectFit: 'cover' }"
+              @mouseover="playVideo(item)"
+              @mouseout="pauseVideo(item)"
+              controls
+              preload="auto"
+          ></video>
         </div>
         <!-- 标题区域 -->
         <div class="h-auto p-3 flex flex-col justify-between grow">
@@ -109,6 +119,43 @@ onUnmounted(() => {
 watch(() => props.columnCount, (newColumnCount) => {
   // 如果需要处理列数变化的情况，可以在这里添加逻辑
 })
+
+// 视频显示控制方法
+const showVideo = (item) => {
+  item.showVideo = true
+}
+
+const hideVideo = (item) => {
+  item.showVideo = false
+}
+
+const playVideo = (item) => {
+  console.log("hover")
+  item.showVideo = true
+  const videoElement = document.querySelector(`video[src="${item.videoUrl}"]`)
+  // if (videoElement) {
+  //
+  //   videoElement.play()
+  // }
+  if (videoElement && !videoElement.paused) {
+    // 视频已经在播放中
+    console.log('Video is already playing');
+  } else if (videoElement) {
+    // 开始播放视频
+    videoElement.play().catch((error) => {
+      console.error('Error playing video:', error);
+    });
+  }
+}
+
+const pauseVideo = (item) => {
+  item.showVideo = false
+  const videoElement = document.querySelector(`video[src="${item.videoUrl}"]`)
+  if (videoElement) {
+    videoElement.pause()
+    videoElement.currentTime = 0
+  }
+}
 </script>
 
 <style scoped>
