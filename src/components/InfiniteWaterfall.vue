@@ -4,7 +4,7 @@
         class="grid gap-4"
         :style="{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }"
     >
-      <!-- foreach items-->
+      <!-- foreach items video card-->
       <div
           v-for="item in items"
           :key="item.videoId"
@@ -86,6 +86,7 @@ const loadMore = async () => {
   console.log('Loading more items...')
   loading.value = true
   try {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     const res = await recommendVideoFeed(page.value)
     const newItems = res.data.data
     console.log('New items:', newItems)
